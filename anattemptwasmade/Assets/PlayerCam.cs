@@ -27,7 +27,7 @@ public class PlayerCam : MonoBehaviour
     void Update()
     {
         //Updates camera position to follow the "player".
-        transform.position = Player.position + CamOffset;
+        //transform.position = Player.position + CamOffset;
 
         //Check for player input, allows for a combination of the keys to be pressed. Fills two variables that are later added together for the total "direction".
         //This block is looking for input for the camera position.
@@ -58,9 +58,9 @@ public class PlayerCam : MonoBehaviour
         Vinput = up + down;
         
         //WIP, this block is to allow camera rotation aroudn the "player".
-        //transform.LookAt(Player);
-        //CamRotate = new Vector3(Rspeed * Hinput * Time.deltaTime, Rspeed * Vinput * Time.deltaTime, 0);
-        //transform.position = transform.position - CamRotate;
+        transform.LookAt(Player);
+        CamRotate = new Vector3(Rspeed * Hinput * Time.deltaTime, Rspeed * Vinput * Time.deltaTime, 0);
+        transform.position = transform.position - CamRotate;
 
     }
 }
