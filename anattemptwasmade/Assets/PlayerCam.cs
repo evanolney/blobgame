@@ -8,7 +8,7 @@ public class PlayerCam : MonoBehaviour
     public Vector3 CamOffset;
     public Vector3 CamRotate;
 
-    public float Rspeed = 35f;
+    public float Rspeed = 50f;
 
     public float left = 0f;
     public float right = 0f;
@@ -17,10 +17,14 @@ public class PlayerCam : MonoBehaviour
     public float Hinput = 0f;
     public float Vinput = 0f;
 
+    //These are "current" X and Y cords containers.
+    public float cY = 0f;
+    public float cX = 0f;
+
     // Start is called before the first frame update
     void Start()
     {
-        
+       
     }
 
     // Update is called once per frame
@@ -56,11 +60,20 @@ public class PlayerCam : MonoBehaviour
         //A negative total results in left/backward movement a positive total results in right/forward movement.
         Hinput = left + right;
         Vinput = up + down;
-        
-        //WIP, this block is to allow camera rotation aroudn the "player".
-        transform.LookAt(Player);
-        CamRotate = new Vector3(Rspeed * Hinput * Time.deltaTime, Rspeed * Vinput * Time.deltaTime, 0);
-        transform.position = transform.position - CamRotate;
 
+        //Translates input * camera speed into X and Y cords for the cam to update to.
+        cY += Vinput * Rspeed * Time.deltaTime;
+        cX += Hinput * Rspeed * Time.deltaTime;
+        
+    }
+
+    void LateUpdate()
+    {
+        //This block of code moves the camera itself, based on info I've seen online it should be in the "LateUpdate" method.
+        CamOffset = new Vector3(0, 0, -10f);
+        Quaternion CamRotate = Quaternion.Euler(cY, cX, 0);
+        transform.position = Player.position + CamRotate * CamOffset;
+        Debug.Log(transform.position);
+        transform.LookAt(Player);
     }
 }

@@ -494,15 +494,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Player: {fileID: 2061344374}
-  CamOffset: {x: 0, y: 2.66, z: -10.3}
+  CamOffset: {x: 0, y: 0, z: 0}
   CamRotate: {x: 0, y: 0, z: 0}
-  Rspeed: 35.7
+  Rspeed: 50
   left: 0
   right: 0
   down: 0
   up: 0
   Hinput: 0
   Vinput: 0
+  cY: 0
+  cX: 0
 --- !u!1 &1947703237
 GameObject:
   m_ObjectHideFlags: 0
