@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Movement : MonoBehaviour
 {
+    private Animator anim;
     public Rigidbody rb;
     public float speed = 20f;
 
@@ -25,7 +26,8 @@ public class Movement : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        rb = GetComponent<Rigidbody>();
+        anim = gameObject.GetComponentInChildren<Animator>();
     }
 
     // Update is called once per frame
@@ -35,9 +37,9 @@ public class Movement : MonoBehaviour
         //This block looks for input on player movement.
         if (Input.GetKey("a"))
         {
-            left = -1f;
+            left = -1f;                       
         }
-        else { left = 0f; }
+        else { left = 0f;}
         if (Input.GetKey("d"))
         {
             right = 1f;
@@ -46,8 +48,9 @@ public class Movement : MonoBehaviour
         if (Input.GetKey("w"))
         {
             forward = 1f;
+            if (state == "stand") { anim.SetBool("walking", true); }
         }
-        else { forward = 0f; }
+        else { forward = 0f; anim.SetBool("walking", false); }
         if (Input.GetKey("s"))
         {
             backward = -1f;
@@ -60,11 +63,15 @@ public class Movement : MonoBehaviour
             state = "jump";
             jump = 1f;
             lastY = transform.position.y;
+            anim.SetTrigger("jumped");
+            anim.SetBool("ascending", true);
         }
         //Causes the player to fall once they've reached the "max jump height"
         else if((float)transform.position.y - lastY > maxJump || state == "fall" || state == "stand")
         {
             jump = 0f;
+            anim.SetBool("ascending", false);
+            if (state != "stand") { anim.SetBool("descending", true); }
         }
 
         //Combine left/right/forward/backward inputs to get the direction of Hinput and Finput.
@@ -86,6 +93,7 @@ public class Movement : MonoBehaviour
         if (state != "stand" && rb.velocity.y <= 0)
         {
             state = "stand";
+            anim.SetBool("descending", false);
         }
     }
     //Function that updates when player leaves collision. Sets state to "fall" so player cannot walk off a platform and then jump. 
@@ -96,6 +104,7 @@ public class Movement : MonoBehaviour
         if (state == "stand" && state != "jump" && rb.velocity.y < 0)
         {
             state = "fall";
+            anim.SetBool("descending", true);
         }
     }
 }
