@@ -70,10 +70,9 @@ public class PlayerCam : MonoBehaviour
     void LateUpdate()
     {
         //This block of code moves the camera itself, based on info I've seen online it should be in the "LateUpdate" method.
-        CamOffset = new Vector3(0, 0, -10f);
+        CamOffset = new Vector3(0, 0, -15f);
         Quaternion CamRotate = Quaternion.Euler(cY, cX, 0);
         transform.position = Player.position + CamRotate * CamOffset;
-        Debug.Log(transform.position);
         transform.LookAt(Player);
     }
 }

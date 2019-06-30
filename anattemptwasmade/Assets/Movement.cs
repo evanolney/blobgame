@@ -67,7 +67,7 @@ public class Movement : MonoBehaviour
             anim.SetBool("ascending", true);
         }
         //Causes the player to fall once they've reached the "max jump height"
-        else if((float)transform.position.y - lastY > maxJump || state == "fall" || state == "stand")
+        else if((float)transform.position.y - lastY >= maxJump || state == "fall" || state == "stand")
         {
             jump = 0f;
             anim.SetBool("ascending", false);
@@ -78,10 +78,6 @@ public class Movement : MonoBehaviour
         //A negative total results in left/backward movement a positive total results in right/forward movement.
         Hinput = left + right;
         Finput = forward + backward;
-    
-        //Add the force to the object to give it motion, multiplies speed by input (direction) and the time delta which should cause it to behave consistently with high frame rates.
-        //Does all axes at the same time.
-        rb.AddForce(speed * Hinput * Time.deltaTime, Jspeed * jump * Time.deltaTime, speed * Finput * Time.deltaTime, ForceMode.VelocityChange);
     }
 
     //Function that should only update when collision is detected. Resets player state to "stand" so they can jump again.
@@ -90,11 +86,12 @@ public class Movement : MonoBehaviour
     {
         //Checks that state isn't "stand" and velocity is 0 or lower before changing state to "stand".
         //This prevents it from setting the state to stand before the player leaves the ground (which would prevent the jump).
-        if (state != "stand" && rb.velocity.y <= 0)
+        if (state != "stand" && rb.velocity.y <= 1)
         {
             state = "stand";
             anim.SetBool("descending", false);
         }
+        Debug.Log("Collided");
     }
     //Function that updates when player leaves collision. Sets state to "fall" so player cannot walk off a platform and then jump. 
     void OnCollisionExit()
@@ -106,5 +103,12 @@ public class Movement : MonoBehaviour
             state = "fall";
             anim.SetBool("descending", true);
         }
+    }
+
+    void FixedUpdate()
+    {
+        //Add the force to the object to give it motion, multiplies speed by input (direction) and the time delta which should cause it to behave consistently with high frame rates.
+        //Does all axes at the same time.
+        rb.AddForce(speed * Hinput * Time.deltaTime, Jspeed * jump * Time.deltaTime, speed * Finput * Time.deltaTime, ForceMode.VelocityChange);
     }
 }
