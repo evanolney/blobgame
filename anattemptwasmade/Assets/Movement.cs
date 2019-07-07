@@ -6,28 +6,38 @@ public class Movement : MonoBehaviour
 {
     private Animator anim;
     public Rigidbody rb;
-    public float speed = 20f;
 
-    public float left = 0f;
-    public float right = 0f;
-    public float Hinput = 0f;
+    //All three of these are for being able to reference variables in the camera script, we hijack the cameras X rotation and apply it to our Vector3 that determines direction.
+    public GameObject currentCam;
+    private PlayerCam camScript;
+    private Quaternion camRef;
 
-    public float forward = 0f;
-    public float backward = 0f;
-    public float Finput = 0f;
+    private float speed = 50f;
 
-    public float Jspeed = 20f;
-    public float jump = 0f;
-    public float maxJump = 4.5f;
+    private float left = 0f;
+    private float right = 0f;
+    private float Hinput = 0f;
 
-    public string state = "stand";
-    public float lastY;
+    private float forward = 0f;
+    private float backward = 0f;
+    private float Finput = 0f;
+
+    private Vector3 direction;
+
+    private float Jspeed = 20f;
+    private float jump = 0f;
+    private float maxJump = 4.5f;
+
+    private string state = "stand";
+    private float lastY;
 
     // Start is called before the first frame update
     void Start()
     {
         rb = GetComponent<Rigidbody>();
         anim = gameObject.GetComponentInChildren<Animator>();
+        //Fills the camScript variable with the script attached to the camera game object.
+        camScript = currentCam.GetComponent<PlayerCam>();
     }
 
     // Update is called once per frame
@@ -78,6 +88,9 @@ public class Movement : MonoBehaviour
         //A negative total results in left/backward movement a positive total results in right/forward movement.
         Hinput = left + right;
         Finput = forward + backward;
+
+        direction = new Vector3(speed * Hinput * Time.deltaTime, Jspeed * jump * Time.deltaTime, speed * Finput * Time.deltaTime);
+        camRef = Quaternion.Euler(0, camScript.cX, 0);
     }
 
     //Function that should only update when collision is detected. Resets player state to "stand" so they can jump again.
@@ -108,7 +121,7 @@ public class Movement : MonoBehaviour
     void FixedUpdate()
     {
         //Add the force to the object to give it motion, multiplies speed by input (direction) and the time delta which should cause it to behave consistently with high frame rates.
-        //Does all axes at the same time.
-        rb.AddForce(speed * Hinput * Time.deltaTime, Jspeed * jump * Time.deltaTime, speed * Finput * Time.deltaTime, ForceMode.VelocityChange);
+        //Does all axes at the same time. Now also rotates properly with camera orientation!
+        rb.AddForce(camRef * direction, ForceMode.VelocityChange);
     }
 }
