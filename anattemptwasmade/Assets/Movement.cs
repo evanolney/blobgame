@@ -89,7 +89,8 @@ public class Movement : MonoBehaviour
         Hinput = left + right;
         Finput = forward + backward;
 
-        direction = new Vector3(speed * Hinput * Time.deltaTime, Jspeed * jump * Time.deltaTime, speed * Finput * Time.deltaTime);
+        //Creates a vector3 that takes the inputs multiplied by the speed and time delta to add to force later in the FixedUpdated().
+        direction = new Vector3((speed * Hinput) * Time.fixedDeltaTime, (Jspeed * jump) * Time.fixedDeltaTime, (speed * Finput) * Time.fixedDeltaTime);
         camRef = Quaternion.Euler(0, camScript.cX, 0);
     }
 
@@ -104,7 +105,6 @@ public class Movement : MonoBehaviour
             state = "stand";
             anim.SetBool("descending", false);
         }
-        Debug.Log("Collided");
     }
     //Function that updates when player leaves collision. Sets state to "fall" so player cannot walk off a platform and then jump. 
     void OnCollisionExit()
@@ -123,5 +123,6 @@ public class Movement : MonoBehaviour
         //Add the force to the object to give it motion, multiplies speed by input (direction) and the time delta which should cause it to behave consistently with high frame rates.
         //Does all axes at the same time. Now also rotates properly with camera orientation!
         rb.AddForce(camRef * direction, ForceMode.VelocityChange);
+        Debug.Log(rb.constraints);
     }
 }
